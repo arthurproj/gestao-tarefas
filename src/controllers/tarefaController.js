@@ -1,6 +1,7 @@
 const Tarefa = require('../models/Tarefa');
 
 const tarefaController = {
+  
   listarTodas: async (req, res) => {
     try {
       const usuarioId = req.usuario.id;
@@ -66,20 +67,18 @@ const tarefaController = {
   concluir: async (req, res) => {
     try {
         const { id } = req.params;
-        const usuarioId = req.usuario.id; // Obtém do middleware de autenticação
+        const usuarioId = req.usuario.id;
 
-        // Verifica se a tarefa existe e pertence ao usuário
         const tarefa = await Tarefa.buscarPorId(id, usuarioId);
         if (!tarefa) {
             return res.status(404).json({ erro: 'Tarefa não encontrada ou não pertence ao usuário' });
         }
 
-        // Atualiza apenas o campo 'concluida' para true
         const tarefaAtualizada = await Tarefa.atualizar(
             id, 
-            null,  // Não altera o título
-            null,  // Não altera a descrição
-            true,  // Marca como concluída
+            null, 
+            null, 
+            true, 
             usuarioId
         );
 
@@ -88,7 +87,7 @@ const tarefaController = {
         console.error('Erro ao concluir tarefa:', err);
         res.status(500).json({ erro: 'Erro ao concluir tarefa' });
     }
-}
+  }
 };
 
 module.exports = tarefaController;

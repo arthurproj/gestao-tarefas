@@ -2,7 +2,6 @@ const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Função para registrar um novo usuário
 exports.registrar = async (req, res) => {
   const { nome, email, senha } = req.body;
 
@@ -27,7 +26,6 @@ exports.registrar = async (req, res) => {
   }
 };
 
-// Função para realizar login
 exports.login = async (req, res) => {
   const { email, senha } = req.body;
 
@@ -66,3 +64,4 @@ exports.login = async (req, res) => {
     res.status(500).json({ erro: 'Erro interno no servidor' });
   }
 };
+

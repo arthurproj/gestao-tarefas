@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const cors = require('cors');
+const { swaggerUi, swaggerSpec } = require('./docs/swagger.js');
 const PORT = process.env.PORT || 3000;
 require('dotenv').config();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(cors());
 app.use('/api', tarefaRoutes);
 app.use('/api', usuarioRoutes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/registro.html', (req, res) => {
