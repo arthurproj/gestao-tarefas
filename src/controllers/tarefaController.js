@@ -3,7 +3,8 @@ const Tarefa = require('../models/Tarefa');
 const tarefaController = {
   listarTodas: async (req, res) => {
     try {
-      const tarefas = await Tarefa.buscarTodas();
+      const usuarioId = req.usuario.id;
+      const tarefas = await Tarefa.buscarTodas(usuarioId);
       res.json(tarefas);
     } catch (erro) {
       res.status(500).json({ erro: 'Erro ao buscar tarefas.' });
@@ -13,7 +14,8 @@ const tarefaController = {
   listarPorId: async (req, res) => {
     try {
       const { id } = req.params;
-      const tarefa = await Tarefa.buscarPorId(id);
+      const usuarioId = req.usuario.id;
+      const tarefa = await Tarefa.buscarPorId(id, usuarioId);
 
       if (!tarefa) {
         return res.status(404).json({ erro: 'Tarefa não encontrada.' });
@@ -28,7 +30,8 @@ const tarefaController = {
   criar: async (req, res) => {
     try {
       const { titulo, descricao } = req.body;
-      const novaTarefa = await Tarefa.criar(titulo, descricao);
+      const usuarioId = req.usuario.id;
+      const novaTarefa = await Tarefa.criar(titulo, descricao, usuarioId);
       res.status(201).json(novaTarefa);
     } catch (erro) {
       res.status(500).json({ erro: 'Erro ao criar tarefa.' });
@@ -39,8 +42,8 @@ const tarefaController = {
     try {
       const { id } = req.params;
       const { titulo, descricao, concluida } = req.body;
-
-      const tarefaAtualizada = await Tarefa.atualizar(id, titulo, descricao, concluida);
+      const usuarioId = req.usuario.id;
+      const tarefaAtualizada = await Tarefa.atualizar(id, titulo, descricao, concluida, usuarioId);
 
       res.json(tarefaAtualizada);
     } catch (erro) {
@@ -51,10 +54,10 @@ const tarefaController = {
   excluir: async (req, res) => {
     try {
       const { id } = req.params;
+      const usuarioId = req.usuario.id;
+      await Tarefa.excluir(id, usuarioId);
 
-      await Tarefa.excluir(id);
-
-      res.status(204).send(); // sem conteúdo
+      res.status(204).send(); 
     } catch (erro) {
       res.status(500).json({ erro: 'Erro ao excluir tarefa.' });
     }
