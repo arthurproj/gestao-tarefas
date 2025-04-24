@@ -14,6 +14,9 @@ app.use('/api', tarefaRoutes);
 app.use('/api', usuarioRoutes);
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/registro.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'registro.html'));
+});
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));  // Serve o index.html
 });
