@@ -6,6 +6,7 @@ const tarefaController = {
     const usuarioId = req.usuario.id;
 
     try {
+      const usuarioId = req.usuario.id;
       const tarefas = await Tarefa.buscarTodas(usuarioId);
       res.json(tarefas);
     } catch (erro) {
@@ -16,8 +17,11 @@ const tarefaController = {
 
   // GET /api/tarefas/:id
   listarPorId: async (req, res) => {
-    const { id } = req.params;
-    const usuarioId = req.usuario.id;
+
+    try {
+      const { id } = req.params;
+      const usuarioId = req.usuario.id;
+      const tarefa = await Tarefa.buscarPorId(id, usuarioId);
 
     try {
       const tarefa = await Tarefa.buscarPorId(id, usuarioId);
@@ -37,6 +41,9 @@ const tarefaController = {
     const usuarioId = req.usuario.id;
 
     try {
+      const { titulo, descricao } = req.body;
+      const usuarioId = req.usuario.id;
+
       const novaTarefa = await Tarefa.criar(titulo, descricao, usuarioId);
       res.status(201).json(novaTarefa);
     } catch (erro) {
@@ -52,17 +59,10 @@ const tarefaController = {
     const usuarioId = req.usuario.id;
 
     try {
-      const tarefaAtualizada = await Tarefa.atualizar(
-        id,
-        titulo,
-        descricao,
-        concluida,
-        usuarioId
-      );
-
-      if (!tarefaAtualizada) {
-        return res.status(404).json({ erro: 'Tarefa não encontrada ou sem permissão.' });
-      }
+      const { id } = req.params;
+      const { titulo, descricao, concluida } = req.body;
+      const usuarioId = req.usuario.id;
+      const tarefaAtualizada = await Tarefa.atualizar(id, titulo, descricao, concluida, usuarioId);
 
       res.json(tarefaAtualizada);
     } catch (erro) {
@@ -73,12 +73,12 @@ const tarefaController = {
 
   // DELETE /api/tarefas/:id
   excluir: async (req, res) => {
-    const { id } = req.params;
-    const usuarioId = req.usuario.id;
-
     try {
+      const { id } = req.params;
+      const usuarioId = req.usuario.id;
       await Tarefa.excluir(id, usuarioId);
-      res.status(204).send();
+
+      res.status(204).send(); 
     } catch (erro) {
       console.error('Erro ao excluir tarefa:', erro);
       res.status(500).json({ erro: 'Erro ao excluir tarefa.' });
