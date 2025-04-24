@@ -27,26 +27,35 @@ exports.registrar = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, senha } = req.body;
 
+  // Validação simples
+  if (!email || !senha) {
+      return res.status(400).json({ erro: 'Email e senha são obrigatórios' });
+  }
+
   try {
-    const resultado = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
-    const usuario = resultado.rows[0];
+      const resultado = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
+      
+      if (resultado.rows.length === 0) {
+          return res.status(404).json({ erro: 'Usuário não encontrado' });
+      }
 
-    if (!usuario) {
-      return res.status(400).json({ erro: 'Usuário não encontrado.' });
-    }
+      const usuario = resultado.rows[0];
+      const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
-    const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
-    if (!senhaCorreta) {
-      return res.status(401).json({ erro: 'Senha incorreta.' });
-    }
+      if (!senhaValida) {
+          return res.status(401).json({ erro: 'Credenciais inválidas' });
+      }
 
-    const token = jwt.sign({ id: usuario.id, nome: usuario.nome }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+      const token = jwt.sign(
+          { id: usuario.id, email: usuario.email },
+          process.env.JWT_SECRET,
+          { expiresIn: '1h' }
+      );
 
-    res.json({ token });
+      res.json({ token, nome: usuario.nome });
+
   } catch (err) {
-    console.error('Erro no login:', err);;
-    res.status(500).json({ erro: 'Erro ao fazer login.' });
+      console.error('Erro no login:', err);
+      res.status(500).json({ erro: 'Erro interno no servidor' });
   }
 };
