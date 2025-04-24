@@ -2,17 +2,18 @@ const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+//Registro de usuário
 exports.registrar = async (req, res) => {
   const { nome, email, senha } = req.body;
 
   try {
-    // Verificando se o email já está cadastrado
+    //Verificando se o email já está cadastrado
     const usuarioExistente = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
     if (usuarioExistente.rows.length > 0) {
       return res.status(400).json({ erro: 'Usuário já cadastrado.' });
     }
 
-    // Criptografando a senha antes de salvar no banco
+    //Criptografando a senha antes de salvar no banco
     const senhaHash = await bcrypt.hash(senha, 10);
     const novoUsuario = await pool.query(
       'INSERT INTO usuarios (nome, email, senha) VALUES ($1, $2, $3) RETURNING id, nome, email',
@@ -26,10 +27,11 @@ exports.registrar = async (req, res) => {
   }
 };
 
+//Login do usuário
 exports.login = async (req, res) => {
   const { email, senha } = req.body;
 
-  // Verificando se o email e a senha foram informados
+  //Verificando se o email e a senha foram informados
   if (!email || !senha) {
     return res.status(400).json({ erro: 'Email e senha são obrigatórios' });
   }
@@ -43,14 +45,14 @@ exports.login = async (req, res) => {
 
     const usuario = resultado.rows[0];
 
-    // Comparando a senha informada com a armazenada
+    //Comparando a senha informada com a armazenada
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
     if (!senhaValida) {
       return res.status(401).json({ erro: 'Credenciais inválidas' });
     }
 
-    // Gerando o token de autenticação
+    //Gerando o token de autenticação
     const token = jwt.sign(
       { id: usuario.id, email: usuario.email },
       process.env.JWT_SECRET,

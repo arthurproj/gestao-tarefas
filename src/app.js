@@ -17,7 +17,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/registro.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'registro.html'));
+    res.sendFile(path.join(__dirname, 'views', 'registro.html')); // Serve o registro.html
 });
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));  // Serve o index.html

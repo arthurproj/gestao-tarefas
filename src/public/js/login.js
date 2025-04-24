@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            btnSubmit.disabled = true; // Desabilita o botão durante a requisição
+            btnSubmit.disabled = true; //Desabilita o botão durante a requisição
             btnSubmit.textContent = 'Carregando...';
 
             const response = await fetch('http://localhost:3000/api/login', {

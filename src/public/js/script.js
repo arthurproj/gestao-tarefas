@@ -4,15 +4,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   
     // Verificando o token
     if (!token && currentPage !== '/login.html' && currentPage !== '/registro.html') {
-      window.location.href = '/login.html';  // Redireciona para login se não estiver logado
+      window.location.href = '/login.html';  //Redireciona para login se não estiver logado
       return;
     }
   
     if (token && currentPage === '/login.html') {
-      window.location.href = '/tarefas.html';  // Redireciona para tarefas se já estiver logado
+      window.location.href = '/tarefas.html';  //Redireciona para tarefas se já estiver logado
       return;
     }
-  
+
+    //Carregar tarefas
     if (currentPage === '/tarefas.html') {
       carregarTarefas();
   
@@ -22,16 +23,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = '/login.html';  // Redireciona para login
       });
   
-      // Nova Tarefa
+      //Nova Tarefa tela
       const novaTarefaBtn = document.getElementById('novaTarefaBtn');
       const novaTarefaModal = new bootstrap.Modal(document.getElementById('novaTarefaModal'));
       const novaTarefaForm = document.getElementById('novaTarefaForm');
   
       novaTarefaBtn.addEventListener('click', () => {
-        novaTarefaForm.reset();  // Limpa o formulário
+        novaTarefaForm.reset();  //Limpa o formulário
         novaTarefaModal.show();
       });
-  
+      //Fazendo nova tarefa
       novaTarefaForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const titulo = document.getElementById('titulo').value.trim();
@@ -56,7 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   
           novaTarefaModal.hide();
           novaTarefaForm.reset();
-          carregarTarefas();  // Atualiza a lista de tarefas
+          carregarTarefas();  //Atualiza a lista de tarefas
         } catch (err) {
           console.error('Erro ao criar tarefa:', err);
           alert('Erro ao criar tarefa');
@@ -64,46 +65,47 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     }
   
-    // Registro
-    if (currentPage === '/registro.html') {
-      const registroForm = document.getElementById('registroForm');
+
+  // Registro
+  if (currentPage === '/registro.html') {
+    const registroForm = document.getElementById('registroForm');
   
-      registroForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    registroForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
   
-        const nome = document.getElementById('nome').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const senha = document.getElementById('senha').value.trim();
+      const nome = document.getElementById('nome').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const senha = document.getElementById('senha').value.trim();
   
-        if (!nome || !email || !senha) {
-          alert('Preencha todos os campos.');
-          return;
+      if (!nome || !email || !senha) {
+        alert('Preencha todos os campos.');
+        return;
+      }
+  
+      try {
+        const response = await fetch('http://localhost:3000/api/usuarios', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nome, email, senha })
+        });
+  
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.erro || 'Erro ao registrar usuário');
         }
   
-        try {
-          const response = await fetch('http://localhost:3000/api/usuarios', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ nome, email, senha })
-          });
-  
-          if (!response.ok) {
-            const data = await response.json();
-            throw new Error(data.erro || 'Erro ao registrar usuário');
-          }
-  
-          alert('Usuário registrado com sucesso!');
-          window.location.href = '/login.html';  // Redireciona para a página de login após o registro
-        } catch (err) {
-          console.error('Erro ao registrar:', err);
-          alert(err.message);
-        }
-      });
-    }
+        alert('Usuário registrado com sucesso!');
+        window.location.href = '/login.html';  // Redireciona para a página de login após o registro
+      } catch (err) {
+        console.error('Erro ao registrar:', err);
+        alert(err.message);
+      }
+    });
+  }
   });
-  
+
 //Carregar todas as tarefas
 async function carregarTarefas() {
     const token = localStorage.getItem('token');
@@ -226,13 +228,13 @@ async function concluirTarefa(id) {
             throw new Error("Erro ao concluir tarefa");
         }
 
-        // Atualiza o cache local
+        //Atualiza o cache local
         const tarefaIndex = window.tarefasCache.findIndex(t => t.id === id);
         if (tarefaIndex !== -1) {
             window.tarefasCache[tarefaIndex].concluida = true;
         }
 
-        // Atualiza apenas o card específico sem recarregar tudo
+        //Atualiza apenas o card específico sem recarregar tudo
         const card = document.querySelector(`[onclick="concluirTarefa(${id})"]`).closest('.card');
         card.classList.add('tarefa-concluida');
         card.querySelector('.card-title').classList.add('texto-concluido');
@@ -245,3 +247,5 @@ async function concluirTarefa(id) {
         alert('Erro ao concluir tarefa: ' + error.message);
     }
 }
+
+    

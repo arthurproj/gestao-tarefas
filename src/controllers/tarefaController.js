@@ -1,7 +1,7 @@
 const Tarefa = require('../models/Tarefa');
 
 const tarefaController = {
-  
+  //Listar todas as tarefas
   listarTodas: async (req, res) => {
     try {
       const usuarioId = req.usuario.id;
@@ -11,7 +11,7 @@ const tarefaController = {
       res.status(500).json({ erro: 'Erro ao buscar tarefas.' });
     }
   },
-
+  //Buscar tarefas especifícas por ID (usado no concluir)
   listarPorId: async (req, res) => {
     try {
       const { id } = req.params;
@@ -27,7 +27,7 @@ const tarefaController = {
       res.status(500).json({ erro: 'Erro ao buscar tarefa.' });
     }
   },
-
+  //Criar tarefa
   criar: async (req, res) => {
     try {
       const { titulo, descricao } = req.body;
@@ -38,7 +38,7 @@ const tarefaController = {
       res.status(500).json({ erro: 'Erro ao criar tarefa.' });
     }
   },
-
+  //Atualizar tarefa existente (editar)
   atualizar: async (req, res) => {
     try {
       const { id } = req.params;
@@ -51,7 +51,7 @@ const tarefaController = {
       res.status(500).json({ erro: 'Erro ao atualizar tarefa.' });
     }
   },
-
+  //Deletar tarefa
   excluir: async (req, res) => {
     try {
       const { id } = req.params;
@@ -63,7 +63,7 @@ const tarefaController = {
       res.status(500).json({ erro: 'Erro ao excluir tarefa.' });
     }
   },
-
+  //Marcar tarefa como concluida
   concluir: async (req, res) => {
     try {
         const { id } = req.params;

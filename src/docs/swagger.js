@@ -10,7 +10,7 @@ const options = {
       description: 'API para gerenciar tarefas de um usuário',
     },
   },
-  apis: ['./src/routes/*.js', './src/controllers/*.js', './src/docs/swagger.js'],  // Certifique-se de que esses caminhos estão corretos
+  apis: ['./src/routes/*.js', './src/controllers/*.js', './src/docs/swagger.js'],  //Caminhos dos arquivos que o swagger pega
 };
 
 const swaggerSpec = swaggerJsdoc(options);
