@@ -19,9 +19,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Vercel
 app.use(express.static(path.join(__dirname, 'views/public') // Serve CSS/JS
 ));
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views/index.html')); // Serve html's
-});
 
 //URL's
 app.get('/registro.html', (req, res) => {
